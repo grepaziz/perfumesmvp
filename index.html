@@ -170,77 +170,72 @@ nav {
 
 /* Grid */
 .perfume-grid {
-  max-width: var(--max-w); margin: 0 auto; padding: 0 2.5rem 3rem;
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(275px, 1fr)); gap: 1rem;
+  max-width: var(--max-w); margin: 0 auto; padding: 0 1rem 3rem;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem;
 }
 
 /* Card */
 .perfume-card {
   background: var(--bg-white); border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius);
   cursor: pointer; transition: var(--transition);
   display: flex; flex-direction: column;
   overflow: hidden;
 }
 .perfume-card:hover {
-  border-color: var(--border); transform: translateY(-2px); box-shadow: var(--shadow-lg);
+  border-color: #ddd; transform: translateY(-1px);
 }
 .card-img-wrap {
-  width: 100%; aspect-ratio: 1 / 1; background: var(--bg-warm);
+  width: 100%; aspect-ratio: 1.2 / 1; background: #fdfdfd;
   display: flex; align-items: center; justify-content: center;
   overflow: hidden; position: relative;
+  border-bottom: 1px solid #f8f9fa;
 }
 .card-img-wrap img {
-  width: 100%; height: 100%; object-fit: contain; padding: 1rem;
-  transition: transform 0.4s ease;
+  width: 100%; height: 100%; object-fit: contain; padding: 0.5rem;
+  transition: opacity 0.2s;
 }
-.perfume-card:hover .card-img-wrap img { transform: scale(1.05); }
 .card-img-placeholder {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 0.3rem; color: var(--text-light); font-size: 0.65rem; letter-spacing: 0.05em;
+  color: #eee;
 }
-.card-img-placeholder .placeholder-bottle {
-  opacity: 0.13; width: 60px; height: auto;
+.card-img-placeholder svg {
+  width: 32px; height: 32px;
 }
-.card-body { padding: 1.2rem 1.4rem 1.4rem; display: flex; flex-direction: column; flex-grow: 1; }
+.card-body { padding: 0.75rem; display: flex; flex-direction: column; flex-grow: 1; }
 .card-top {
-  display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.6rem;
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem;
 }
 .card-brand {
-  font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--accent); font-weight: 600;
+  font-size: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-muted); font-weight: 500;
 }
 .card-variants-count {
-  font-size: 0.58rem; padding: 0.18rem 0.5rem; border-radius: 20px;
-  background: var(--bg-warm); color: var(--text-muted); font-weight: 500;
+  font-size: 0.55rem; color: var(--text-light);
 }
 .card-name {
-  font-family: var(--font-display); font-size: 1.12rem; font-weight: 500;
-  line-height: 1.3; color: var(--text-primary); margin-bottom: 0.15rem;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  font-size: 0.85rem; font-weight: 600;
+  line-height: 1.2; color: var(--text-primary); margin-bottom: 0.25rem;
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
 }
 .card-year {
-  font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.8rem;
+  font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.5rem;
 }
 .card-accords {
-  display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 1rem; flex-grow: 1;
+  display: flex; flex-wrap: wrap; gap: 0.2rem; margin-bottom: 0.75rem; flex-grow: 1;
 }
 .accord-tag {
-  font-size: 0.6rem; padding: 0.2rem 0.5rem; border-radius: 20px;
-  background: var(--bg-warm); color: var(--text-secondary);
+  font-size: 0.55rem; padding: 0.15rem 0.4rem; border-radius: 4px;
+  background: #f8f9fa; color: var(--text-secondary);
 }
 .card-bottom {
-  display: flex; align-items: flex-end; justify-content: space-between;
-  padding-top: 0.8rem; border-top: 1px solid var(--border-light);
-}
-.card-price-label {
-  font-size: 0.55rem; letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--text-muted); margin-bottom: 0.1rem;
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 0.5rem; border-top: 1px solid #f8f9fa;
 }
 .card-price {
-  font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--text-primary);
+  font-size: 0.95rem; font-weight: 700; color: var(--text-primary);
 }
-.card-price .currency { font-size: 0.7rem; color: var(--text-muted); font-weight: 400; margin-left: 0.1rem; }
+.card-price .currency { font-size: 0.65rem; color: var(--text-muted); font-weight: 400; margin-left: 0.1rem; }
 .card-rating { display: flex; align-items: center; gap: 0.3rem; }
 .rating-circle {
   width: 34px; height: 34px; border-radius: 50%;
@@ -771,7 +766,7 @@ function renderGrid(reset) {
     grid.innerHTML = '<div class="empty-state"><div class="empty-state-text">No fragrances found</div></div>';
   }
 
-  slice.forEach(g => {
+    slice.forEach(g => {
     const p = g.rep;
     const card = document.createElement('div');
     card.className = 'perfume-card';
@@ -785,7 +780,7 @@ function renderGrid(reset) {
     card.innerHTML = `
       <div class="card-img-wrap">
         ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(cleanName(p))}" loading="lazy">` :
-          `<div class="card-img-placeholder">${BOTTLE_SVG}</div>`}
+          `<div class="card-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2L10 6H14L12 2Z" fill="currentColor"/><rect x="8" y="6" width="8" height="2" rx="0.5" fill="currentColor"/><path d="M7 8H17V18C17 20.2091 15.2091 22 13 22H11C8.79086 22 7 20.2091 7 18V8Z" stroke="currentColor" stroke-width="1.5"/></svg></div>`}
       </div>
       <div class="card-body">
       <div class="card-top">
@@ -798,10 +793,9 @@ function renderGrid(reset) {
       <div class="card-bottom">
         <div>
           ${g.hasPricing ? `
-            <div class="card-price-label">From</div>
             <div class="card-price">${g.lowestPrice ? g.lowestPrice.toFixed(0) : '—'}<span class="currency"> SAR</span></div>
           ` : `
-            <div class="card-no-price">No pricing available</div>
+            <div class="card-no-price">No pricing</div>
           `}
         </div>
         ${ratingHTML}
