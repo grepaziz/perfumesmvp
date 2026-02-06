@@ -4,41 +4,41 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="origin">
-<title>ESSENZA — Perfume Comparison</title>
+<title>Perfume Prices — Clean & Simple</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
 :root {
-  --bg: #faf9f7;
+  --bg: #ffffff;
   --bg-white: #ffffff;
-  --bg-warm: #f5f3ef;
-  --bg-hover: #f0ede8;
-  --text-primary: #1a1a1a;
-  --text-secondary: #555;
-  --text-muted: #999;
-  --text-light: #bbb;
-  --accent: #8b6914;
-  --accent-light: #c9a24d;
-  --accent-bg: rgba(139,105,20,0.06);
-  --accent-bg-strong: rgba(139,105,20,0.1);
-  --green: #2d7a4f;
-  --green-bg: rgba(45,122,79,0.08);
-  --red: #b34040;
-  --red-bg: rgba(179,64,64,0.06);
-  --border: #e8e5e0;
-  --border-light: #f0ede8;
-  --radius: 8px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-  --shadow: 0 2px 12px rgba(0,0,0,0.06);
-  --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'DM Sans', -apple-system, sans-serif;
-  --transition: 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --max-w: 1260px;
+  --bg-warm: #f8f9fa;
+  --bg-hover: #f1f3f5;
+  --text-primary: #111111;
+  --text-secondary: #444444;
+  --text-muted: #888888;
+  --text-light: #aaaaaa;
+  --accent: #000000;
+  --accent-light: #333333;
+  --accent-bg: rgba(0,0,0,0.05);
+  --accent-bg-strong: rgba(0,0,0,0.1);
+  --green: #099268;
+  --green-bg: #ebfbee;
+  --red: #fa5252;
+  --red-bg: #fff5f5;
+  --border: #e9ecef;
+  --border-light: #f1f3f5;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 16px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+  --font-display: 'Inter', -apple-system, sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --transition: 0.2s ease;
+  --max-w: 1100px;
 }
 
 html { scroll-behavior: smooth; }
@@ -47,97 +47,83 @@ body {
   font-family: var(--font-body);
   background: var(--bg);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
 
 /* ─── Loading ─── */
 #loading-screen {
-  position: fixed; inset: 0; background: var(--bg);
+  position: fixed; inset: 0; background: #fff;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  z-index: 10000; transition: opacity 0.5s ease, visibility 0.5s ease;
+  z-index: 10000; transition: opacity 0.4s ease;
 }
 #loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 .logo-load {
-  font-family: var(--font-display); font-size: 2.4rem; font-weight: 500;
-  letter-spacing: 0.15em; color: var(--text-primary); margin-bottom: 2rem;
+  font-size: 1.5rem; font-weight: 600;
+  letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 1.5rem;
 }
-.loader-bar { width: 160px; height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
+.loader-bar { width: 120px; height: 3px; background: #f1f3f5; border-radius: 10px; overflow: hidden; }
 .loader-bar::after {
-  content: ''; display: block; width: 40%; height: 100%;
-  background: var(--accent); animation: loadSlide 1s ease-in-out infinite;
+  content: ''; display: block; width: 30%; height: 100%;
+  background: #000; animation: loadSlide 0.8s ease-in-out infinite;
 }
 @keyframes loadSlide { 0%{transform:translateX(-100%)} 100%{transform:translateX(400%)} }
 .load-status {
-  margin-top: 1.2rem; font-size: 0.7rem; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--text-muted);
+  margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted);
 }
 
 /* ─── Nav ─── */
 nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-  padding: 0.9rem 2.5rem;
+  position: sticky; top: 0; z-index: 1000;
+  padding: 1rem 2rem;
   display: flex; align-items: center; justify-content: space-between;
-  background: rgba(250,249,247,0.92); backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border-light);
-  transition: var(--transition);
+  background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+  border-bottom: 1px solid #eee;
 }
 .nav-logo {
-  font-family: var(--font-display); font-size: 1.3rem; font-weight: 600;
-  letter-spacing: 0.12em; color: var(--text-primary); text-decoration: none; cursor: pointer;
+  font-size: 1.1rem; font-weight: 700;
+  letter-spacing: -0.02em; color: var(--text-primary); text-decoration: none; cursor: pointer;
 }
 .nav-count {
-  font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);
+  font-size: 0.75rem; color: var(--text-muted);
 }
-.nav-count span { color: var(--accent); font-weight: 500; }
+.nav-count span { color: var(--text-primary); font-weight: 600; }
 
 /* ─── Pages ─── */
 #app { min-height: 100vh; }
 .page { display: none; }
-.page.active { display: block; animation: fadeIn 0.35s ease; }
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.page.active { display: block; }
 
 /* ═══════════════════════════════
-   HOME / LANDING
+   HOME
    ═══════════════════════════════ */
 .hero {
-  padding: 7.5rem 2.5rem 3rem;
+  padding: 4rem 2rem 2rem;
   text-align: center;
-  background: linear-gradient(180deg, #fff 0%, var(--bg) 100%);
-}
-.hero-tagline {
-  font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 1rem; font-weight: 500;
 }
 .hero-title {
-  font-family: var(--font-display);
-  font-size: clamp(2.2rem, 5vw, 3.6rem);
-  font-weight: 500; line-height: 1.2; color: var(--text-primary); margin-bottom: 0.8rem;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: var(--text-primary); margin-bottom: 0.5rem;
 }
-.hero-title em { font-style: italic; color: var(--accent); }
 .hero-subtitle {
-  font-size: 0.95rem; color: var(--text-secondary); font-weight: 300;
-  max-width: 480px; margin: 0 auto 2.5rem;
+  font-size: 1rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 2rem;
 }
 
 /* Search */
 .search-container {
-  max-width: 580px; margin: 0 auto 1.8rem; position: relative;
+  max-width: 500px; margin: 0 auto 1.5rem; position: relative;
 }
 .search-input {
-  width: 100%; padding: 0.95rem 1.3rem 0.95rem 2.8rem;
-  background: var(--bg-white); border: 1px solid var(--border);
-  border-radius: 50px; color: var(--text-primary);
-  font-family: var(--font-body); font-size: 0.9rem; font-weight: 400;
-  outline: none; transition: var(--transition);
-  box-shadow: var(--shadow-sm);
+  width: 100%; padding: 0.8rem 1.2rem 0.8rem 2.8rem;
+  background: #f8f9fa; border: 1px solid #eee;
+  border-radius: 12px; color: var(--text-primary);
+  font-size: 0.95rem; outline: none; transition: var(--transition);
 }
-.search-input::placeholder { color: var(--text-light); }
-.search-input:focus { border-color: var(--accent-light); box-shadow: 0 0 0 3px var(--accent-bg); }
+.search-input:focus { background: #fff; border-color: #000; box-shadow: 0 0 0 4px rgba(0,0,0,0.05); }
 .search-icon {
   position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
   color: var(--text-muted); pointer-events: none;
@@ -546,14 +532,14 @@ footer {
 <body>
 
 <div id="loading-screen">
-  <div class="logo-load">ESSENZA</div>
+  <div class="logo-load">Perfume Prices</div>
   <div class="loader-bar"></div>
-  <div class="load-status" id="load-status">Loading catalog…</div>
+  <div class="load-status" id="load-status">Loading…</div>
 </div>
 
 <nav>
-  <a class="nav-logo" onclick="navigateTo('')">ESSENZA</a>
-  <div class="nav-count"><span id="nav-total">0</span> fragrances</div>
+  <a class="nav-logo" onclick="navigateTo('')">Perfume Prices</a>
+  <div class="nav-count"><span id="nav-total">0</span> items</div>
 </nav>
 
 <div id="app">
@@ -561,9 +547,8 @@ footer {
   <!-- HOME -->
   <div id="page-home" class="page active">
     <section class="hero">
-      <p class="hero-tagline">Discover · Compare · Choose</p>
-      <h1 class="hero-title">Find Your <em>Signature</em> Scent</h1>
-      <p class="hero-subtitle">Compare prices across retailers for thousands of fragrances in one place</p>
+      <h1 class="hero-title">Perfume Prices</h1>
+      <p class="hero-subtitle">The simplest way to compare fragrance prices</p>
       <div class="search-container">
         <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" class="search-input" id="search-input" placeholder="Search by name, brand, or note…" autocomplete="off">
@@ -712,17 +697,15 @@ function buildGroups() {
 async function loadCatalog() {
   const status = document.getElementById('load-status');
   try {
-    status.textContent = 'Fetching catalog…';
+    status.textContent = 'Loading…';
     const [catRes, imgRes] = await Promise.all([
       fetch('catalog/catalog.json'),
       fetch('catalog/images.json').catch(() => null)
     ]);
-    status.textContent = 'Parsing data…';
     catalog = await catRes.json();
     if (imgRes && imgRes.ok) {
       try { imageMap = await imgRes.json(); } catch(e) { imageMap = {}; }
     }
-    status.textContent = 'Grouping variants…';
     buildGroups();
     document.getElementById('nav-total').textContent = groupedList.length.toLocaleString();
     applyFilters();
