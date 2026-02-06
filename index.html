@@ -860,6 +860,12 @@ function cleanName(p) {
 }
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function fixUrl(url) {
+  if (!url) return url;
+  // amourbh.net uses hash routing: /product/ID -> /#/product/ID
+  if (url.includes('amourbh.net/product/')) return url.replace('amourbh.net/product/', 'amourbh.net/#/product/');
+  return url;
+}
 
 // ═══════════════════════════════
 // PROFILE
@@ -1005,7 +1011,7 @@ function renderProfile(baseKey) {
               ${discount ? `<span class="listing-discount">-${discount}%</span>` : ''}
             </div>
             <div class="listing-actions">
-              <a href="${esc(l.url)}" target="_blank" rel="${l.url && l.url.includes('amourbh') ? 'noopener' : 'noreferrer noopener'}" class="listing-visit">Visit ↗</a>
+              <a href="${esc(fixUrl(l.url))}" target="_blank" rel="noreferrer noopener" class="listing-visit">Visit ↗</a>
               <span class="listing-stock"><span class="stock-dot ${l.in_stock ? 'in' : 'out'}"></span>${l.in_stock ? 'In Stock' : 'Out'}</span>
             </div>
           </div>`;
