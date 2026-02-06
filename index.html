@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="origin">
+<title>ESSENZA — Perfume Comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --bg: #faf9f7;
+  --bg-white: #ffffff;
+  --bg-warm: #f5f3ef;
+  --bg-hover: #f0ede8;
+  --text-primary: #1a1a1a;
+  --text-secondary: #555;
+  --text-muted: #999;
+  --text-light: #bbb;
+  --accent: #8b6914;
+  --accent-light: #c9a24d;
+  --accent-bg: rgba(139,105,20,0.06);
+  --accent-bg-strong: rgba(139,105,20,0.1);
+  --green: #2d7a4f;
+  --green-bg: rgba(45,122,79,0.08);
+  --red: #b34040;
+  --red-bg: rgba(179,64,64,0.06);
+  --border: #e8e5e0;
+  --border-light: #f0ede8;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, sans-serif;
+  --transition: 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --max-w: 1260px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+/* ─── Loading ─── */
+#loading-screen {
+  position: fixed; inset: 0; background: var(--bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 10000; transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+#loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.logo-load {
+  font-family: var(--font-display); font-size: 2.4rem; font-weight: 500;
+  letter-spacing: 0.15em; color: var(--text-primary); margin-bottom: 2rem;
+}
+.loader-bar { width: 160px; height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
+.loader-bar::after {
+  content: ''; display: block; width: 40%; height: 100%;
+  background: var(--accent); animation: loadSlide 1s ease-in-out infinite;
+}
+@keyframes loadSlide { 0%{transform:translateX(-100%)} 100%{transform:translateX(400%)} }
+.load-status {
+  margin-top: 1.2rem; font-size: 0.7rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+
+/* ─── Nav ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 0.9rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(250,249,247,0.92); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-light);
+  transition: var(--transition);
+}
+.nav-logo {
+  font-family: var(--font-display); font-size: 1.3rem; font-weight: 600;
+  letter-spacing: 0.12em; color: var(--text-primary); text-decoration: none; cursor: pointer;
+}
+.nav-count {
+  font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);
+}
+.nav-count span { color: var(--accent); font-weight: 500; }
+
+/* ─── Pages ─── */
+#app { min-height: 100vh; }
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* ═══════════════════════════════
+   HOME / LANDING
+   ═══════════════════════════════ */
+.hero {
+  padding: 7.5rem 2.5rem 3rem;
+  text-align: center;
+  background: linear-gradient(180deg, #fff 0%, var(--bg) 100%);
+}
+.hero-tagline {
+  font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 1rem; font-weight: 500;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 500; line-height: 1.2; color: var(--text-primary); margin-bottom: 0.8rem;
+}
+.hero-title em { font-style: italic; color: var(--accent); }
+.hero-subtitle {
+  font-size: 0.95rem; color: var(--text-secondary); font-weight: 300;
+  max-width: 480px; margin: 0 auto 2.5rem;
+}
+
+/* Search */
+.search-container {
+  max-width: 580px; margin: 0 auto 1.8rem; position: relative;
+}
+.search-input {
+  width: 100%; padding: 0.95rem 1.3rem 0.95rem 2.8rem;
+  background: var(--bg-white); border: 1px solid var(--border);
+  border-radius: 50px; color: var(--text-primary);
+  font-family: var(--font-body); font-size: 0.9rem; font-weight: 400;
+  outline: none; transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+.search-input::placeholder { color: var(--text-light); }
+.search-input:focus { border-color: var(--accent-light); box-shadow: 0 0 0 3px var(--accent-bg); }
+.search-icon {
+  position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); pointer-events: none;
+}
+
+/* Filters */
+.filters-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.4rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto 1rem;
+}
+.filter-group { display: flex; align-items: center; gap: 0.3rem; }
+.filter-group-label {
+  font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-muted); margin-right: 0.25rem; font-weight: 500;
+}
+.filter-divider { width: 1px; height: 18px; background: var(--border); margin: 0 0.6rem; }
+.filter-chip {
+  padding: 0.35rem 0.8rem; border: 1px solid var(--border); border-radius: 30px;
+  background: var(--bg-white); color: var(--text-secondary);
+  font-family: var(--font-body); font-size: 0.7rem; font-weight: 400;
+  cursor: pointer; transition: var(--transition); white-space: nowrap;
+}
+.filter-chip:hover { border-color: var(--accent-light); color: var(--text-primary); }
+.filter-chip.active {
+  background: var(--text-primary); border-color: var(--text-primary); color: #fff; font-weight: 500;
+}
+
+/* Results Meta */
+.results-meta {
+  max-width: var(--max-w); margin: 0 auto 1.2rem; padding: 0 2.5rem;
+  display: flex; align-items: baseline; justify-content: space-between;
+}
+.results-count {
+  font-size: 0.7rem; letter-spacing: 0.06em; color: var(--text-muted);
+}
+.results-count span { color: var(--accent); font-weight: 600; }
+.toggle-confidence {
+  font-size: 0.68rem; color: var(--text-muted); background: var(--bg-white);
+  border: 1px solid var(--border); padding: 0.3rem 0.75rem; border-radius: 20px;
+  cursor: pointer; font-family: var(--font-body); transition: var(--transition);
+}
+.toggle-confidence:hover { border-color: var(--accent-light); }
+.toggle-confidence.active { border-color: var(--accent); color: var(--accent); }
+
+/* Grid */
+.perfume-grid {
+  max-width: var(--max-w); margin: 0 auto; padding: 0 2.5rem 3rem;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(275px, 1fr)); gap: 1rem;
+}
+
+/* Card */
+.perfume-card {
+  background: var(--bg-white); border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  cursor: pointer; transition: var(--transition);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.perfume-card:hover {
+  border-color: var(--border); transform: translateY(-2px); box-shadow: var(--shadow-lg);
+}
+.card-img-wrap {
+  width: 100%; aspect-ratio: 1 / 1; background: var(--bg-warm);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; position: relative;
+}
+.card-img-wrap img {
+  width: 100%; height: 100%; object-fit: contain; padding: 1rem;
+  transition: transform 0.4s ease;
+}
+.perfume-card:hover .card-img-wrap img { transform: scale(1.05); }
+.card-img-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.3rem; color: var(--text-light); font-size: 0.65rem; letter-spacing: 0.05em;
+}
+.card-img-placeholder .placeholder-bottle {
+  opacity: 0.13; width: 60px; height: auto;
+}
+.card-body { padding: 1.2rem 1.4rem 1.4rem; display: flex; flex-direction: column; flex-grow: 1; }
+.card-top {
+  display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.6rem;
+}
+.card-brand {
+  font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); font-weight: 600;
+}
+.card-variants-count {
+  font-size: 0.58rem; padding: 0.18rem 0.5rem; border-radius: 20px;
+  background: var(--bg-warm); color: var(--text-muted); font-weight: 500;
+}
+.card-name {
+  font-family: var(--font-display); font-size: 1.12rem; font-weight: 500;
+  line-height: 1.3; color: var(--text-primary); margin-bottom: 0.15rem;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.card-year {
+  font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.8rem;
+}
+.card-accords {
+  display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 1rem; flex-grow: 1;
+}
+.accord-tag {
+  font-size: 0.6rem; padding: 0.2rem 0.5rem; border-radius: 20px;
+  background: var(--bg-warm); color: var(--text-secondary);
+}
+.card-bottom {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding-top: 0.8rem; border-top: 1px solid var(--border-light);
+}
+.card-price-label {
+  font-size: 0.55rem; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 0.1rem;
+}
+.card-price {
+  font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--text-primary);
+}
+.card-price .currency { font-size: 0.7rem; color: var(--text-muted); font-weight: 400; margin-left: 0.1rem; }
+.card-rating { display: flex; align-items: center; gap: 0.3rem; }
+.rating-circle {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 600; position: relative;
+}
+.rating-circle svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.rating-circle .rating-value { position: relative; z-index: 1; color: var(--text-primary); }
+.card-no-rating { font-size: 0.6rem; color: var(--text-light); }
+.card-no-price {
+  font-size: 0.68rem; color: var(--text-muted); font-style: italic;
+}
+
+/* Load More */
+.load-more-wrap { text-align: center; padding: 1.5rem 0 4rem; }
+.load-more-btn {
+  padding: 0.7rem 2.2rem; background: var(--bg-white);
+  border: 1px solid var(--border); border-radius: 30px;
+  color: var(--text-primary); font-family: var(--font-body);
+  font-size: 0.75rem; letter-spacing: 0.06em; cursor: pointer; transition: var(--transition);
+}
+.load-more-btn:hover { background: var(--text-primary); color: #fff; border-color: var(--text-primary); }
+
+/* ═══════════════════════════════
+   PROFILE PAGE
+   ═══════════════════════════════ */
+.profile-page { padding-top: 60px; }
+
+.profile-back {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 1.2rem 2.5rem; font-size: 0.7rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-muted);
+  text-decoration: none; cursor: pointer; transition: var(--transition);
+}
+.profile-back:hover { color: var(--accent); }
+.profile-back:hover svg { transform: translateX(-3px); }
+.profile-back svg { transition: var(--transition); }
+
+/* ── Profile Top: Image + Info + Pricing ── */
+.profile-top {
+  max-width: var(--max-w); margin: 0 auto; padding: 0 2.5rem 2.5rem;
+  display: grid; grid-template-columns: 280px 1fr 1fr; gap: 2.5rem; align-items: start;
+}
+.profile-image {
+  background: var(--bg-warm); border-radius: var(--radius-xl); overflow: hidden;
+  aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border-light);
+}
+.profile-image img {
+  width: 100%; height: 100%; object-fit: contain; padding: 1.2rem;
+}
+.profile-image-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.5rem; color: var(--text-light); font-size: 0.7rem; letter-spacing: 0.05em;
+}
+.profile-image-placeholder .placeholder-bottle { opacity: 0.13; width: 90px; height: auto; }
+.profile-info {}
+.profile-brand {
+  font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--accent); font-weight: 600; margin-bottom: 0.4rem;
+}
+.profile-name {
+  font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 500; line-height: 1.2; color: var(--text-primary); margin-bottom: 0.6rem;
+}
+.profile-meta { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.profile-meta-badge {
+  padding: 0.25rem 0.6rem; border: 1px solid var(--border); border-radius: 20px;
+  font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary);
+}
+.profile-meta-item {
+  font-size: 0.72rem; color: var(--text-secondary);
+  display: flex; align-items: center; gap: 0.3rem;
+}
+.meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--text-light); }
+.parfumo-link {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: 0.65rem; color: var(--text-muted); text-decoration: none;
+  padding: 0.2rem 0.6rem; border: 1px solid var(--border-light); border-radius: 20px;
+  transition: var(--transition); letter-spacing: 0.02em;
+}
+.parfumo-link:hover { border-color: var(--accent-light); color: var(--accent); }
+.parfumo-link svg { width: 12px; height: 12px; }
+
+/* Rating inline */
+.profile-rating-inline {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.8rem 1rem; background: var(--bg-warm); border-radius: var(--radius);
+  margin-bottom: 1.5rem; width: fit-content;
+}
+.profile-rating-num {
+  font-family: var(--font-display); font-size: 1.8rem; font-weight: 600; color: var(--text-primary);
+}
+.profile-rating-bar-wrap { display: flex; flex-direction: column; gap: 0.2rem; }
+.profile-rating-label { font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.profile-rating-bar {
+  width: 100px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+}
+.profile-rating-fill {
+  height: 100%; border-radius: 2px; background: var(--accent); transition: width 0.8s ease;
+}
+
+/* Variant selectors */
+.variant-selectors { margin-bottom: 1.2rem; }
+.variant-group { margin-bottom: 0.8rem; }
+.variant-label {
+  font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 0.35rem; font-weight: 500;
+}
+.variant-options { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.variant-btn {
+  padding: 0.4rem 0.85rem; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--bg-white); color: var(--text-secondary);
+  font-family: var(--font-body); font-size: 0.72rem; cursor: pointer; transition: var(--transition);
+  display: flex; flex-direction: column; align-items: center; gap: 0.1rem;
+}
+.variant-btn .vb-price { font-size: 0.58rem; color: var(--text-muted); font-weight: 400; }
+.variant-btn:hover { border-color: var(--accent-light); color: var(--text-primary); }
+.variant-btn.active {
+  border-color: var(--text-primary); background: var(--text-primary); color: #fff; font-weight: 500;
+}
+.variant-btn.active .vb-price { color: rgba(255,255,255,0.7); }
+
+/* Price panel (right side) */
+.profile-pricing {
+  background: var(--bg-white); border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl); padding: 1.8rem; box-shadow: var(--shadow);
+  position: sticky; top: 80px;
+}
+.pricing-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+.pricing-from {
+  font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);
+}
+.pricing-best {
+  font-family: var(--font-display); font-size: 2rem; font-weight: 600; color: var(--text-primary);
+}
+.pricing-best .cur { font-size: 0.9rem; color: var(--text-muted); font-weight: 400; }
+.pricing-range {
+  font-size: 0.72rem; color: var(--text-muted); margin-bottom: 1.2rem;
+  padding-bottom: 1.2rem; border-bottom: 1px solid var(--border-light);
+}
+
+/* Listing rows */
+.listing-row {
+  display: grid; grid-template-columns: 1fr auto auto;
+  align-items: center; gap: 0.8rem;
+  padding: 0.7rem 0; border-bottom: 1px solid var(--border-light);
+  transition: var(--transition);
+}
+.listing-row:last-child { border-bottom: none; }
+.listing-row:hover { background: var(--bg-warm); margin: 0 -0.5rem; padding-left: 0.5rem; padding-right: 0.5rem; border-radius: var(--radius); }
+.listing-row.best { background: var(--green-bg); margin: 0 -0.5rem; padding-left: 0.5rem; padding-right: 0.5rem; border-radius: var(--radius); }
+.listing-source {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.78rem; font-weight: 500; color: var(--text-primary);
+}
+.listing-badges { display: flex; gap: 0.25rem; }
+.badge-best {
+  font-size: 0.5rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700;
+  padding: 0.12rem 0.4rem; border-radius: 10px; background: var(--green); color: #fff;
+}
+.badge-tester {
+  font-size: 0.5rem; padding: 0.12rem 0.4rem; border-radius: 10px;
+  background: var(--accent-bg-strong); color: var(--accent); font-weight: 600; text-transform: uppercase;
+}
+.badge-sample {
+  font-size: 0.5rem; padding: 0.12rem 0.4rem; border-radius: 10px;
+  background: var(--bg-warm); color: var(--text-muted); font-weight: 600; text-transform: uppercase;
+}
+.listing-price-col { text-align: right; }
+.listing-price {
+  font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: var(--text-primary);
+}
+.listing-original {
+  font-size: 0.65rem; color: var(--text-light); text-decoration: line-through;
+}
+.listing-discount {
+  font-size: 0.58rem; color: var(--green); font-weight: 600; margin-left: 0.2rem;
+}
+.listing-stock {
+  font-size: 0.62rem; display: flex; align-items: center; gap: 0.2rem;
+}
+.stock-dot { width: 5px; height: 5px; border-radius: 50%; }
+.stock-dot.in { background: var(--green); }
+.stock-dot.out { background: var(--red); }
+.listing-visit {
+  font-size: 0.65rem; color: var(--accent); text-decoration: none;
+  font-weight: 500; transition: var(--transition);
+}
+.listing-visit:hover { text-decoration: underline; }
+.listing-actions {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 0.15rem;
+}
+
+/* ── Profile Bottom: Scent details ── */
+.profile-bottom {
+  max-width: var(--max-w); margin: 0 auto; padding: 0 2.5rem 4rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+}
+.profile-section {
+  background: var(--bg-white); border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg); padding: 1.8rem;
+}
+.profile-section.full-width { grid-column: 1 / -1; }
+.section-title {
+  font-family: var(--font-display); font-size: 1.05rem; font-weight: 500;
+  color: var(--text-primary); margin-bottom: 1.2rem;
+  padding-bottom: 0.8rem; border-bottom: 1px solid var(--border-light);
+}
+
+/* Pyramid */
+.scent-pyramid { display: flex; flex-direction: column; gap: 1.5rem; }
+.pyramid-level {}
+.pyramid-label {
+  font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.4rem; font-weight: 600;
+}
+.pyramid-hint { font-weight: 400; color: var(--text-muted); letter-spacing: 0; text-transform: none; font-size: 0.58rem; }
+.pyramid-notes { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.note-pill {
+  padding: 0.28rem 0.65rem; border-radius: 20px; font-size: 0.7rem; color: var(--text-primary);
+}
+.note-pill.top { background: rgba(139,105,20,0.08); border: 1px solid rgba(139,105,20,0.12); }
+.note-pill.mid { background: rgba(120,100,70,0.07); border: 1px solid rgba(120,100,70,0.1); }
+.note-pill.base { background: rgba(80,70,60,0.06); border: 1px solid rgba(80,70,60,0.09); }
+
+/* Accords */
+.accords-list { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.accord-pill {
+  padding: 0.35rem 0.85rem; border-radius: 30px; font-size: 0.72rem;
+  background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(139,105,20,0.1);
+  font-weight: 500;
+}
+
+/* Perfumer */
+.perfumer-item {
+  display: flex; align-items: center; gap: 0.7rem; padding: 0.5rem 0;
+}
+.perfumer-icon {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--accent-bg); display: flex; align-items: center; justify-content: center;
+  color: var(--accent); font-size: 0.7rem;
+}
+.perfumer-name {
+  font-family: var(--font-display); font-size: 1rem; font-style: italic; color: var(--text-primary);
+}
+
+/* Empty */
+.empty-state { grid-column: 1 / -1; text-align: center; padding: 4rem 2rem; }
+.empty-state-text { font-family: var(--font-display); font-size: 1.2rem; color: var(--text-muted); }
+.profile-empty { color: var(--text-muted); font-size: 0.8rem; font-style: italic; }
+
+/* Footer */
+footer {
+  text-align: center; padding: 2rem; border-top: 1px solid var(--border-light);
+  font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1100px) {
+  .profile-top { grid-template-columns: 220px 1fr; gap: 1.5rem; }
+  .profile-pricing { grid-column: 1 / -1; position: static; }
+}
+@media (max-width: 900px) {
+  .profile-top { grid-template-columns: 1fr; gap: 1.5rem; }
+  .profile-image { max-width: 240px; margin: 0 auto; }
+  .profile-pricing { position: static; }
+  .profile-bottom { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  nav { padding: 0.8rem 1.5rem; }
+  .hero { padding: 6.5rem 1.5rem 2.5rem; }
+  .perfume-grid { padding: 0 1rem 2rem; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.8rem; }
+  .results-meta { padding: 0 1rem; flex-direction: column; gap: 0.4rem; }
+  .profile-top { padding: 0 1.5rem 2rem; }
+  .profile-bottom { padding: 0 1.5rem 3rem; }
+  .profile-back { padding: 1rem 1.5rem; }
+  .filters-bar { gap: 0.25rem; }
+  .filter-divider { display: none; }
+}
+@media (max-width: 480px) {
+  .perfume-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="loading-screen">
+  <div class="logo-load">ESSENZA</div>
+  <div class="loader-bar"></div>
+  <div class="load-status" id="load-status">Loading catalog…</div>
+</div>
+
+<nav>
+  <a class="nav-logo" onclick="navigateTo('')">ESSENZA</a>
+  <div class="nav-count"><span id="nav-total">0</span> fragrances</div>
+</nav>
+
+<div id="app">
+
+  <!-- HOME -->
+  <div id="page-home" class="page active">
+    <section class="hero">
+      <p class="hero-tagline">Discover · Compare · Choose</p>
+      <h1 class="hero-title">Find Your <em>Signature</em> Scent</h1>
+      <p class="hero-subtitle">Compare prices across retailers for thousands of fragrances in one place</p>
+      <div class="search-container">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-input" id="search-input" placeholder="Search by name, brand, or note…" autocomplete="off">
+      </div>
+      <div class="filters-bar">
+        <div class="filter-group">
+          <span class="filter-group-label">Gender</span>
+          <button class="filter-chip active" data-filter="gender" data-value="all">All</button>
+          <button class="filter-chip" data-filter="gender" data-value="Men">Men</button>
+          <button class="filter-chip" data-filter="gender" data-value="Women">Women</button>
+          <button class="filter-chip" data-filter="gender" data-value="Unisex">Unisex</button>
+        </div>
+        <div class="filter-divider"></div>
+        <div class="filter-group">
+          <span class="filter-group-label">Sort</span>
+          <button class="filter-chip active" data-filter="sort" data-value="rating">Top Rated</button>
+          <button class="filter-chip" data-filter="sort" data-value="price-asc">Price ↑</button>
+          <button class="filter-chip" data-filter="sort" data-value="price-desc">Price ↓</button>
+          <button class="filter-chip" data-filter="sort" data-value="name">Name</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="results-meta">
+      <div class="results-count">Showing <span id="results-shown">0</span> of <span id="results-total">0</span> fragrances</div>
+      <button class="toggle-confidence" id="toggle-conf">With pricing only</button>
+    </div>
+
+    <div class="perfume-grid" id="perfume-grid"></div>
+    <div class="load-more-wrap" id="load-more-wrap" style="display:none">
+      <button class="load-more-btn" id="load-more-btn">Load More</button>
+    </div>
+    <footer>ESSENZA — Perfume Price Comparison</footer>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="page-profile" class="page">
+    <div class="profile-page">
+      <a class="profile-back" onclick="navigateTo('')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back to search
+      </a>
+      <div id="profile-content"></div>
+    </div>
+    <footer>ESSENZA — Perfume Price Comparison</footer>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════
+// STATE
+// ═══════════════════════════════
+let catalog = [];
+let groupedPerfumes = {}; // baseKey -> array of variants
+let groupedList = [];     // array of { baseKey, representative, variants }
+let filtered = [];
+let currentPage = 0;
+const PAGE_SIZE = 30;
+let filters = { gender: 'all', sort: 'rating', search: '', pricingOnly: false };
+let imageMap = {};
+const BOTTLE_SVG = `<svg class="placeholder-bottle" viewBox="0 0 80 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="28" y="4" width="24" height="14" rx="2" fill="currentColor"/>
+  <rect x="32" y="0" width="16" height="6" rx="1.5" fill="currentColor"/>
+  <rect x="24" y="18" width="32" height="6" rx="1" fill="currentColor"/>
+  <path d="M24 24 L18 48 L18 148 C18 154 22 158 28 158 L52 158 C58 158 62 154 62 148 L62 48 L56 24 Z" fill="currentColor"/>
+  <rect x="30" y="60" width="20" height="28" rx="3" fill="white" opacity="0.15"/>
+</svg>`;
+
+// ═══════════════════════════════
+// VARIANT GROUPING
+// ═══════════════════════════════
+function extractBaseKey(item) {
+  // Primary: use canonical_url — all size/concentration variants share the same URL
+  if (item.canonical_url) return item.canonical_url;
+  // Fallback: strip last two segments from catalog_id (size + concentration)
+  const id = item.catalog_id || '';
+  return id.replace(/-[^-]+-[^-]+$/, '') || id;
+}
+
+function buildGroups() {
+  groupedPerfumes = {};
+  catalog.forEach(p => {
+    const key = extractBaseKey(p);
+    if (!groupedPerfumes[key]) groupedPerfumes[key] = [];
+    groupedPerfumes[key].push(p);
+  });
+
+  groupedList = Object.entries(groupedPerfumes).map(([baseKey, variants]) => {
+    // Pick the best representative: prefer high confidence, then highest rating, then most listings
+    const sorted = variants.slice().sort((a, b) => {
+      const confOrder = { high: 3, low: 2, none: 1 };
+      const ca = confOrder[a.match_confidence] || 0;
+      const cb = confOrder[b.match_confidence] || 0;
+      if (ca !== cb) return cb - ca;
+      if ((b.rating || 0) !== (a.rating || 0)) return (b.rating || 0) - (a.rating || 0);
+      return (b.num_listings || 0) - (a.num_listings || 0);
+    });
+    const rep = sorted[0];
+
+    // Compute aggregate across all variants
+    let lowestPrice = Infinity;
+    let highestRating = 0;
+    let allAccords = new Set();
+    let anyHighConf = false;
+    let totalListings = 0;
+    const genders = new Set();
+
+    variants.forEach(v => {
+      if (v.lowest_price_sar && v.lowest_price_sar < lowestPrice) lowestPrice = v.lowest_price_sar;
+      if (v.rating && v.rating > highestRating) highestRating = v.rating;
+      (v.main_accords || []).forEach(a => allAccords.add(a));
+      if (v.match_confidence === 'high') anyHighConf = true;
+      if (v.gender) genders.add(v.gender);
+      totalListings += (v.num_listings || 0);
+    });
+
+    // Pre-compute search
+    const searchParts = [];
+    variants.forEach(v => {
+      searchParts.push(v.name, v.brand);
+      (v.main_accords || []).forEach(a => searchParts.push(a));
+      (v.top_notes || []).forEach(n => searchParts.push(n));
+      (v.middle_notes || []).forEach(n => searchParts.push(n));
+      (v.base_notes || []).forEach(n => searchParts.push(n));
+    });
+
+    return {
+      baseKey,
+      variants,
+      rep,
+      lowestPrice: lowestPrice === Infinity ? null : lowestPrice,
+      highestRating: highestRating || null,
+      accords: [...allAccords].slice(0, 5),
+      anyHighConf,
+      hasPricing: totalListings > 0,
+      totalListings,
+      genders,
+      _search: searchParts.filter(Boolean).join(' ').toLowerCase()
+    };
+  });
+}
+
+// ═══════════════════════════════
+// DATA LOADING
+// ═══════════════════════════════
+async function loadCatalog() {
+  const status = document.getElementById('load-status');
+  try {
+    status.textContent = 'Fetching catalog…';
+    const [catRes, imgRes] = await Promise.all([
+      fetch('catalog/catalog.json'),
+      fetch('catalog/images.json').catch(() => null)
+    ]);
+    status.textContent = 'Parsing data…';
+    catalog = await catRes.json();
+    if (imgRes && imgRes.ok) {
+      try { imageMap = await imgRes.json(); } catch(e) { imageMap = {}; }
+    }
+    status.textContent = 'Grouping variants…';
+    buildGroups();
+    document.getElementById('nav-total').textContent = groupedList.length.toLocaleString();
+    applyFilters();
+    handleRoute();
+    setTimeout(() => document.getElementById('loading-screen').classList.add('hidden'), 300);
+  } catch (e) {
+    status.textContent = 'Error loading catalog.';
+    console.error(e);
+  }
+}
+
+function getImageUrl(group) {
+  // Try canonical_url lookup in imageMap
+  if (group.baseKey && imageMap[group.baseKey]) return imageMap[group.baseKey];
+  // Try any variant's canonical_url
+  for (const v of group.variants) {
+    if (v.canonical_url && imageMap[v.canonical_url]) return imageMap[v.canonical_url];
+  }
+  return null;
+}
+
+// ═══════════════════════════════
+// FILTERING
+// ═══════════════════════════════
+function applyFilters() {
+  const q = filters.search.toLowerCase().trim();
+  filtered = groupedList.filter(g => {
+    if (filters.pricingOnly && !g.hasPricing) return false;
+    if (filters.gender !== 'all' && !g.genders.has(filters.gender)) return false;
+    if (q && !g._search.includes(q)) return false;
+    return true;
+  });
+
+  switch (filters.sort) {
+    case 'rating':
+      filtered.sort((a, b) => (b.highestRating || 0) - (a.highestRating || 0));
+      break;
+    case 'price-asc':
+      filtered.sort((a, b) => (a.lowestPrice || 99999) - (b.lowestPrice || 99999));
+      break;
+    case 'price-desc':
+      filtered.sort((a, b) => (b.lowestPrice || 0) - (a.lowestPrice || 0));
+      break;
+    case 'name':
+      filtered.sort((a, b) => (a.rep.name || '').localeCompare(b.rep.name || ''));
+      break;
+  }
+  currentPage = 0;
+  renderGrid(true);
+}
+
+// ═══════════════════════════════
+// GRID
+// ═══════════════════════════════
+function renderGrid(reset) {
+  const grid = document.getElementById('perfume-grid');
+  if (reset) grid.innerHTML = '';
+  const start = currentPage * PAGE_SIZE;
+  const end = start + PAGE_SIZE;
+  const slice = filtered.slice(start, end);
+
+  if (filtered.length === 0 && reset) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-state-text">No fragrances found</div></div>';
+  }
+
+  slice.forEach(g => {
+    const p = g.rep;
+    const card = document.createElement('div');
+    card.className = 'perfume-card';
+    card.onclick = () => navigateTo('perfume/' + g.baseKey);
+
+    const accords = g.accords.slice(0, 4).map(a => `<span class="accord-tag">${esc(a)}</span>`).join('');
+    const ratingHTML = g.highestRating ? buildMiniRating(g.highestRating) : '<span class="card-no-rating">—</span>';
+    const variantCount = g.variants.length;
+    const imgUrl = getImageUrl(g);
+
+    card.innerHTML = `
+      <div class="card-img-wrap">
+        ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(cleanName(p))}" loading="lazy">` :
+          `<div class="card-img-placeholder">${BOTTLE_SVG}</div>`}
+      </div>
+      <div class="card-body">
+      <div class="card-top">
+        <span class="card-brand">${esc(p.brand || 'Unknown')}</span>
+        ${variantCount > 1 ? `<span class="card-variants-count">${variantCount} variants</span>` : ''}
+      </div>
+      <div class="card-name">${esc(cleanName(p))}</div>
+      <div class="card-year">${p.year || ''} ${p.gender ? '· ' + p.gender : ''}</div>
+      <div class="card-accords">${accords}</div>
+      <div class="card-bottom">
+        <div>
+          ${g.hasPricing ? `
+            <div class="card-price-label">From</div>
+            <div class="card-price">${g.lowestPrice ? g.lowestPrice.toFixed(0) : '—'}<span class="currency"> SAR</span></div>
+          ` : `
+            <div class="card-no-price">No pricing available</div>
+          `}
+        </div>
+        ${ratingHTML}
+      </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  document.getElementById('results-shown').textContent = Math.min(end, filtered.length).toLocaleString();
+  document.getElementById('results-total').textContent = filtered.length.toLocaleString();
+  document.getElementById('load-more-wrap').style.display = end < filtered.length ? 'block' : 'none';
+}
+
+function buildMiniRating(rating) {
+  const circ = 2 * Math.PI * 13;
+  const offset = circ - (rating / 10) * circ;
+  const color = rating >= 8 ? 'var(--green)' : rating >= 6 ? 'var(--accent)' : '#b34040';
+  return `<div class="card-rating"><div class="rating-circle">
+    <svg width="34" height="34" viewBox="0 0 34 34">
+      <circle cx="17" cy="17" r="13" fill="none" stroke="var(--border)" stroke-width="2"/>
+      <circle cx="17" cy="17" r="13" fill="none" stroke="${color}" stroke-width="2"
+        stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
+    </svg>
+    <span class="rating-value">${rating.toFixed(1)}</span>
+  </div></div>`;
+}
+
+function cleanName(p) {
+  let name = p.name || '';
+  if (p.brand) name = name.replace(p.brand, '').trim();
+  if (p.year) name = name.replace(String(p.year), '').trim();
+  const concMap = { 'EDP':'Eau de Parfum','EDT':'Eau de Toilette','EDC':'Eau de Cologne','Parfum':'Parfum','Extrait':'Extrait de Parfum' };
+  if (p.concentration) {
+    const full = concMap[p.concentration];
+    if (full) name = name.replace(full, '').trim();
+    name = name.replace(p.concentration, '').trim();
+  }
+  return name.replace(/\s+/g, ' ').trim() || p.name;
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// ═══════════════════════════════
+// PROFILE
+// ═══════════════════════════════
+let selectedVariantId = null;
+
+function renderProfile(baseKey) {
+  const group = groupedList.find(g => g.baseKey === baseKey);
+  const container = document.getElementById('profile-content');
+
+  if (!group) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-state-text">Fragrance not found</div></div>';
+    return;
+  }
+
+  const variants = group.variants;
+  const rep = group.rep;
+
+  // Build unique variant combos (deduplicate same size+conc)
+  const variantMap = new Map();
+  variants.forEach(v => {
+    const key = (v.concentration || '?') + '|' + (v.size_ml || '?');
+    if (!variantMap.has(key)) {
+      variantMap.set(key, v);
+    } else {
+      // Keep the one with more listings
+      const existing = variantMap.get(key);
+      if ((v.num_listings || 0) > (existing.num_listings || 0)) variantMap.set(key, v);
+    }
+  });
+  const uniqueVariants = [...variantMap.values()];
+
+  const sizes = [...new Set(uniqueVariants.map(v => v.size_ml).filter(Boolean))].sort((a,b) => a - b);
+  const concentrations = [...new Set(uniqueVariants.map(v => v.concentration).filter(Boolean))];
+
+  // Default to the variant with the best price that has listings
+  if (!selectedVariantId || !variants.find(v => v.catalog_id === selectedVariantId)) {
+    const withListings = uniqueVariants.filter(v => v.num_listings > 0).sort((a,b) => (b.rating || 0) - (a.rating || 0));
+    selectedVariantId = (withListings[0] || rep).catalog_id;
+  }
+  const active = variants.find(v => v.catalog_id === selectedVariantId) || rep;
+
+  const listings = (active.listings || []).slice().sort((a, b) => (a.price_sar || 9999) - (b.price_sar || 9999));
+  const lowestPrice = listings.length ? listings[0].price_sar : null;
+  const highestPrice = listings.length ? listings[listings.length - 1].price_sar : null;
+
+  // Use scent data from whichever variant has it
+  const scentSource = variants.find(v => v.top_notes?.length || v.middle_notes?.length || v.base_notes?.length) || active;
+  const accordSource = variants.find(v => v.main_accords?.length) || active;
+  const perfumerSource = variants.find(v => v.perfumers?.length) || active;
+  const ratingSource = variants.find(v => v.rating) || active;
+  const hasNotes = scentSource.top_notes?.length || scentSource.middle_notes?.length || scentSource.base_notes?.length;
+
+  // Build variant selector: show price for each size option
+  function buildSizeButtons() {
+    return sizes.map(s => {
+      const v = uniqueVariants.find(x => x.size_ml === s && (active.concentration ? x.concentration === active.concentration : true))
+        || uniqueVariants.find(x => x.size_ml === s);
+      const isActive = active.size_ml === s;
+      const price = v.lowest_price_sar ? v.lowest_price_sar.toFixed(0) + ' SAR' : '';
+      return `<button class="variant-btn ${isActive ? 'active' : ''}" onclick="selectVariant('${esc(v.catalog_id)}','${esc(baseKey)}')">
+        <span>${s}ml</span>${price ? `<span class="vb-price">${price}</span>` : ''}
+      </button>`;
+    }).join('');
+  }
+
+  function buildConcButtons() {
+    return concentrations.map(c => {
+      const v = uniqueVariants.find(x => x.concentration === c && (active.size_ml ? x.size_ml === active.size_ml : true))
+        || uniqueVariants.find(x => x.concentration === c);
+      const isActive = active.concentration === c;
+      return `<button class="variant-btn ${isActive ? 'active' : ''}" onclick="selectVariant('${esc(v.catalog_id)}','${esc(baseKey)}')">${esc(c)}</button>`;
+    }).join('');
+  }
+
+  const profileImg = getImageUrl(group);
+
+  container.innerHTML = `
+    <div class="profile-top">
+      <div class="profile-image">
+        ${profileImg ? `<img src="${esc(profileImg)}" alt="${esc(cleanName(rep))}">` :
+          `<div class="profile-image-placeholder">${BOTTLE_SVG}</div>`}
+      </div>
+      <div class="profile-info">
+        <div class="profile-brand">${esc(rep.brand || 'Unknown Brand')}</div>
+        <h1 class="profile-name">${esc(cleanName(rep))}</h1>
+        <div class="profile-meta">
+          ${active.concentration ? `<span class="profile-meta-badge">${esc(active.concentration)}</span>` : ''}
+          ${rep.year ? `<span class="profile-meta-item">${rep.year}</span>` : ''}
+          ${active.gender ? `<span class="profile-meta-item"><span class="meta-dot"></span>${active.gender}</span>` : ''}
+          ${active.size_ml ? `<span class="profile-meta-item"><span class="meta-dot"></span>${active.size_ml}ml</span>` : ''}
+          ${rep.canonical_url ? `<a href="${esc(rep.canonical_url)}" target="_blank" rel="noreferrer noopener" class="parfumo-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Parfumo</a>` : ''}
+        </div>
+
+        ${ratingSource.rating ? `
+        <div class="profile-rating-inline">
+          <div class="profile-rating-num">${ratingSource.rating.toFixed(1)}</div>
+          <div class="profile-rating-bar-wrap">
+            <div class="profile-rating-label">Rating out of 10</div>
+            <div class="profile-rating-bar"><div class="profile-rating-fill" style="width:${ratingSource.rating * 10}%"></div></div>
+          </div>
+        </div>` : ''}
+
+        ${(concentrations.length > 1 || sizes.length > 1) ? `
+        <div class="variant-selectors">
+          ${concentrations.length > 1 ? `
+          <div class="variant-group">
+            <div class="variant-label">Concentration</div>
+            <div class="variant-options">${buildConcButtons()}</div>
+          </div>` : ''}
+          ${sizes.length > 1 ? `
+          <div class="variant-group">
+            <div class="variant-label">Size</div>
+            <div class="variant-options">${buildSizeButtons()}</div>
+          </div>` : ''}
+        </div>` : ''}
+      </div>
+
+      <div class="profile-pricing">
+        ${lowestPrice ? `
+          <div class="pricing-from">Best price${active.size_ml ? ' for ' + active.size_ml + 'ml' : ''}${active.concentration ? ' ' + active.concentration : ''}</div>
+          <div class="pricing-best">${lowestPrice.toFixed(0)} <span class="cur">SAR</span></div>
+          ${highestPrice && highestPrice !== lowestPrice ? `<div class="pricing-range">${lowestPrice.toFixed(0)} – ${highestPrice.toFixed(0)} SAR · ${listings.length} retailers</div>` : `<div class="pricing-range">${listings.length} retailer${listings.length > 1 ? 's' : ''}</div>`}
+        ` : '<div class="pricing-from">No pricing available for this variant</div><div class="pricing-range">Try selecting a different size or concentration</div>'}
+
+        ${listings.map((l, i) => {
+          const isBest = i === 0 && listings.length > 1;
+          const discount = l.original_price_sar && l.original_price_sar > l.price_sar
+            ? Math.round((1 - l.price_sar / l.original_price_sar) * 100) : null;
+          return `
+          <div class="listing-row ${isBest ? 'best' : ''}">
+            <div class="listing-source">
+              ${esc(l.source)}
+              <div class="listing-badges">
+                ${isBest ? '<span class="badge-best">Best</span>' : ''}
+                ${l.is_tester ? '<span class="badge-tester">Tester</span>' : ''}
+                ${l.is_sample ? '<span class="badge-sample">Sample</span>' : ''}
+              </div>
+            </div>
+            <div class="listing-price-col">
+              <div class="listing-price">${l.price_sar.toFixed(0)} SAR</div>
+              ${l.original_price_sar ? `<span class="listing-original">${l.original_price_sar.toFixed(0)}</span>` : ''}
+              ${discount ? `<span class="listing-discount">-${discount}%</span>` : ''}
+            </div>
+            <div class="listing-actions">
+              <a href="${esc(l.url)}" target="_blank" rel="${l.url && l.url.includes('amourbh') ? 'noopener' : 'noreferrer noopener'}" class="listing-visit">Visit ↗</a>
+              <span class="listing-stock"><span class="stock-dot ${l.in_stock ? 'in' : 'out'}"></span>${l.in_stock ? 'In Stock' : 'Out'}</span>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="profile-bottom">
+      ${hasNotes ? `
+      <div class="profile-section">
+        <div class="section-title">Scent Pyramid</div>
+        <div class="scent-pyramid">
+          ${scentSource.top_notes?.length ? `
+          <div class="pyramid-level">
+            <div class="pyramid-label">Top Notes <span class="pyramid-hint">— First impression</span></div>
+            <div class="pyramid-notes">${scentSource.top_notes.map(n => `<span class="note-pill top">${esc(n)}</span>`).join('')}</div>
+          </div>` : ''}
+          ${scentSource.middle_notes?.length ? `
+          <div class="pyramid-level">
+            <div class="pyramid-label">Heart Notes <span class="pyramid-hint">— Core character</span></div>
+            <div class="pyramid-notes">${scentSource.middle_notes.map(n => `<span class="note-pill mid">${esc(n)}</span>`).join('')}</div>
+          </div>` : ''}
+          ${scentSource.base_notes?.length ? `
+          <div class="pyramid-level">
+            <div class="pyramid-label">Base Notes <span class="pyramid-hint">— Lasting trail</span></div>
+            <div class="pyramid-notes">${scentSource.base_notes.map(n => `<span class="note-pill base">${esc(n)}</span>`).join('')}</div>
+          </div>` : ''}
+        </div>
+      </div>` : ''}
+
+      <div class="profile-section">
+        ${accordSource.main_accords?.length ? `
+          <div class="section-title">Main Accords</div>
+          <div class="accords-list" style="margin-bottom:${perfumerSource.perfumers?.length ? '1.5rem' : '0'}">
+            ${accordSource.main_accords.map(a => `<span class="accord-pill">${esc(a)}</span>`).join('')}
+          </div>
+        ` : ''}
+        ${perfumerSource.perfumers?.length ? `
+          <div class="section-title">Perfumer${perfumerSource.perfumers.length > 1 ? 's' : ''}</div>
+          ${perfumerSource.perfumers.map(n => `
+            <div class="perfumer-item">
+              <div class="perfumer-icon">✦</div>
+              <span class="perfumer-name">${esc(n)}</span>
+            </div>
+          `).join('')}
+        ` : ''}
+        ${!accordSource.main_accords?.length && !perfumerSource.perfumers?.length ? '<div class="section-title">Details</div><p class="profile-empty">No additional details available</p>' : ''}
+      </div>
+
+      ${!hasNotes ? `
+      <div class="profile-section">
+        <div class="section-title">Notes</div>
+        <p class="profile-empty">Scent notes not available for this fragrance</p>
+      </div>` : ''}
+    </div>
+  `;
+}
+
+function selectVariant(catalogId, baseKey) {
+  selectedVariantId = catalogId;
+  renderProfile(baseKey);
+}
+
+// ═══════════════════════════════
+// ROUTING
+// ═══════════════════════════════
+function navigateTo(path) { window.location.hash = '#/' + path; }
+
+function handleRoute() {
+  const hash = window.location.hash.replace('#/', '').replace('#', '');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
+  if (hash.startsWith('perfume/')) {
+    const key = decodeURIComponent(hash.replace('perfume/', ''));
+    document.getElementById('page-profile').classList.add('active');
+    selectedVariantId = null; // Reset so it picks the best representative
+    renderProfile(key);
+    window.scrollTo(0, 0);
+  } else {
+    document.getElementById('page-home').classList.add('active');
+  }
+}
+
+window.addEventListener('hashchange', handleRoute);
+
+// ═══════════════════════════════
+// EVENTS
+// ═══════════════════════════════
+let searchTimer;
+document.getElementById('search-input').addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => { filters.search = e.target.value; applyFilters(); }, 250);
+});
+
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const ft = chip.dataset.filter, val = chip.dataset.value;
+    document.querySelectorAll(`.filter-chip[data-filter="${ft}"]`).forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    filters[ft === 'gender' ? 'gender' : 'sort'] = val;
+    applyFilters();
+  });
+});
+
+document.getElementById('load-more-btn').addEventListener('click', () => { currentPage++; renderGrid(false); });
+
+document.getElementById('toggle-conf').addEventListener('click', function() {
+  filters.pricingOnly = !filters.pricingOnly;
+  this.classList.toggle('active', filters.pricingOnly);
+  this.textContent = filters.pricingOnly ? 'Show all' : 'With pricing only';
+  applyFilters();
+});
+
+// ═══════════════════════════════
+// INIT
+// ═══════════════════════════════
+loadCatalog();
+</script>
+</body>
+</html>
